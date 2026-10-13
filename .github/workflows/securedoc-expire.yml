@@ -1,0 +1,64 @@
+# SecureDoc - eliminacion automatica de documentos vencidos (v1)
+# Lo crea la app SecureDoc. Lee .securedoc-expiry.json y borra los documentos cuya fecha ya paso.
+name: SecureDoc - eliminar documentos vencidos
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pages: write
+concurrency:
+  group: securedoc-expire
+  cancel-in-progress: false
+jobs:
+  expire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Eliminar documentos vencidos
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import datetime, json, os, sys
+          MF = '.securedoc-expiry.json'
+          if not os.path.isfile(MF):
+              sys.exit(0)
+          data = json.load(open(MF, encoding='utf-8'))
+          items = data.get('items', {})
+          now = datetime.datetime.now(datetime.timezone.utc)
+          root = os.path.realpath('.')
+          keep, changed = {}, False
+          for path, iso in items.items():
+              try:
+                  due = datetime.datetime.fromisoformat(str(iso).replace('Z', '+00:00'))
+                  if due.tzinfo is None:
+                      due = due.replace(tzinfo=datetime.timezone.utc)
+              except ValueError:
+                  keep[path] = iso
+                  continue
+              if due > now:
+                  keep[path] = iso
+                  continue
+              changed = True
+              real = os.path.realpath(path)
+              rel = os.path.relpath(real, root)
+              # Seguridad: solo archivos dentro del repositorio y nunca ocultos (.git, .github, .gitkeep, el propio manifiesto)
+              inside = not rel.startswith('..') and not any(seg.startswith('.') for seg in rel.split(os.sep))
+              if inside and os.path.isfile(real):
+                  os.remove(real)
+                  print('Eliminado:', path)
+          if changed:
+              data['items'] = keep
+              with open(MF, 'w', encoding='utf-8') as f:
+                  json.dump(data, f, indent=2, ensure_ascii=False)
+          PY
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "securedoc-bot"
+            git config user.email "securedoc-bot@users.noreply.github.com"
+            git add -A
+            git commit -m "Elimina documentos vencidos"
+            git push || (git pull --rebase && git push)
+            curl -s -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "https://api.github.com/repos/$GITHUB_REPOSITORY/pages/builds" || true
+          fi
