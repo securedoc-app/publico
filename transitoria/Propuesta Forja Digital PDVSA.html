@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FORJA Digital PDVSA — Plataforma Corporativa de Creación de Aplicaciones</title>
+<style>
+  :root{
+    --red:#E2231A; --red-dk:#A6120C; --amber:#F2A900; --amber-dk:#C98A00;
+    --ink:#13161b; --slate:#2b313b; --mut:#5b6472; --line:#e6e9ef;
+    --bg:#ffffff; --bg2:#f5f7fa; --bg3:#eef1f6;
+    --hero:#0d1016; --hero2:#171c25;
+    --radius:16px; --maxw:1160px;
+    --shadow:0 10px 30px rgba(16,20,28,.08); --shadow-lg:0 24px 60px rgba(16,20,28,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  h1,h2,h3{line-height:1.15;letter-spacing:-.01em}
+  section{padding:84px 0}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;
+    text-transform:uppercase;letter-spacing:.12em;color:var(--red);
+    background:rgba(226,35,26,.08);padding:7px 14px;border-radius:999px}
+  .sec-title{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:800;margin:18px 0 14px}
+  .sec-lead{font-size:1.1rem;color:var(--mut);max-width:760px}
+  .num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+    border-radius:9px;background:var(--red);color:#fff;font-weight:800;font-size:.95rem;flex:0 0 auto}
+
+  /* NAV */
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(13,16,22,.82);
+    backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.08)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{display:flex;align-items:center;gap:12px;color:#fff;font-weight:800;font-size:1.05rem}
+  .brand .mark{width:34px;height:34px;border-radius:9px;
+    background:linear-gradient(135deg,var(--red),var(--amber));display:flex;align-items:center;
+    justify-content:center;color:#fff;font-weight:900;box-shadow:0 4px 14px rgba(226,35,26,.45)}
+  .brand small{display:block;font-weight:500;font-size:.68rem;color:#9aa4b2;letter-spacing:.04em}
+  .navlinks{display:flex;gap:26px}
+  .navlinks a{color:#c7cedb;font-size:.92rem;font-weight:500;transition:color .2s}
+  .navlinks a:hover{color:#fff}
+  @media(max-width:860px){.navlinks{display:none}}
+
+  /* HERO */
+  .hero{background:radial-gradient(1200px 600px at 78% -10%,rgba(242,169,0,.14),transparent 60%),
+    radial-gradient(900px 500px at 8% 110%,rgba(226,35,26,.20),transparent 55%),
+    linear-gradient(180deg,var(--hero),var(--hero2));color:#fff;padding:96px 0 104px;position:relative;overflow:hidden}
+  .hero:before{content:"";position:absolute;inset:0;
+    background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+    background-size:52px 52px;mask:radial-gradient(900px 500px at 70% 0%,#000,transparent 70%)}
+  .hero .wrap{position:relative}
+  .hero h1{font-size:clamp(2.1rem,5.2vw,3.7rem);font-weight:900;max-width:16ch;margin:22px 0 18px}
+  .hero h1 .g{background:linear-gradient(120deg,var(--amber),#ffd466);-webkit-background-clip:text;
+    background-clip:text;color:transparent}
+  .hero p.lead{font-size:1.2rem;color:#cdd4e0;max-width:640px}
+  .hero .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:14px 24px;border-radius:12px;
+    font-weight:700;font-size:.98rem;transition:transform .15s,box-shadow .2s;cursor:pointer;border:0}
+  .btn.primary{background:linear-gradient(135deg,var(--red),var(--red-dk));color:#fff;
+    box-shadow:0 10px 28px rgba(226,35,26,.42)}
+  .btn.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.18)}
+  .btn:hover{transform:translateY(-2px)}
+  .hero-stats{display:flex;gap:40px;flex-wrap:wrap;margin-top:54px;padding-top:30px;
+    border-top:1px solid rgba(255,255,255,.1)}
+  .hero-stats .s b{display:block;font-size:1.9rem;font-weight:900;color:#fff}
+  .hero-stats .s span{font-size:.86rem;color:#9aa4b2}
+
+  /* CARDS / GRID */
+  .grid{display:grid;gap:22px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);
+    padding:28px;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s}
+  .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+  .card .ic{width:52px;height:52px;border-radius:13px;display:flex;align-items:center;justify-content:center;
+    font-size:1.5rem;margin-bottom:16px;background:rgba(226,35,26,.1);color:var(--red)}
+  .card.amber .ic{background:rgba(242,169,0,.14);color:var(--amber-dk)}
+  .card h3{font-size:1.2rem;font-weight:800;margin-bottom:8px}
+  .card p{color:var(--mut);font-size:.97rem}
+  .card ul{margin-top:12px;padding-left:2px;list-style:none}
+  .card ul li{position:relative;padding-left:24px;margin:8px 0;color:var(--slate);font-size:.95rem}
+  .card ul li:before{content:"";position:absolute;left:0;top:9px;width:9px;height:9px;border-radius:3px;
+    background:linear-gradient(135deg,var(--red),var(--amber))}
+  .alt{background:var(--bg2)}
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  /* LEVELS */
+  .level{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:start;
+    background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow)}
+  .level .tag{writing-mode:vertical-rl;transform:rotate(180deg);font-weight:900;letter-spacing:.14em;
+    text-transform:uppercase;font-size:.8rem;color:#fff;padding:14px 8px;border-radius:11px;
+    background:linear-gradient(180deg,var(--red),var(--red-dk))}
+  .level.two .tag{background:linear-gradient(180deg,var(--amber),var(--amber-dk))}
+  .level h3{font-size:1.4rem;font-weight:800;margin-bottom:6px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .chip{font-size:.82rem;font-weight:600;color:var(--slate);background:var(--bg3);
+    padding:6px 13px;border-radius:999px;border:1px solid var(--line)}
+  @media(max-width:620px){.level{grid-template-columns:1fr}.level .tag{writing-mode:horizontal-tb;transform:none;width:fit-content}}
+
+  /* FLOW (transactional DB) */
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0;align-items:stretch;margin-top:30px}
+  .flow .step{background:var(--bg);border:1px solid var(--line);padding:24px 20px;position:relative}
+  .flow .step:first-child{border-radius:var(--radius) 0 0 var(--radius)}
+  .flow .step:last-child{border-radius:0 var(--radius) var(--radius) 0}
+  .flow .step .k{font-size:.74rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--red)}
+  .flow .step h4{font-size:1.05rem;font-weight:800;margin:8px 0 6px}
+  .flow .step p{font-size:.88rem;color:var(--mut)}
+  .flow .step:not(:last-child):after{content:"→";position:absolute;right:-13px;top:50%;transform:translateY(-50%);
+    z-index:2;background:var(--red);color:#fff;width:26px;height:26px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem}
+  @media(max-width:900px){.flow{grid-template-columns:1fr}
+    .flow .step{border-radius:0!important}.flow .step:first-child{border-radius:var(--radius) var(--radius) 0 0}
+    .flow .step:last-child{border-radius:0 0 var(--radius) var(--radius)}
+    .flow .step:not(:last-child):after{content:"↓";right:50%;top:auto;bottom:-13px;transform:translateX(50%)}}
+  .note{display:flex;gap:14px;background:rgba(242,169,0,.1);border:1px solid rgba(242,169,0,.35);
+    border-radius:14px;padding:18px 20px;margin-top:26px}
+  .note .b{font-size:1.4rem}
+  .note p{font-size:.95rem;color:var(--slate)}
+
+  /* USE CASES */
+  .case{border-left:4px solid var(--red);background:var(--bg);border:1px solid var(--line);
+    border-left:4px solid var(--red);border-radius:12px;padding:20px 22px}
+  .case h4{font-size:1.05rem;font-weight:800;margin-bottom:5px}
+  .case p{font-size:.92rem;color:var(--mut)}
+
+  /* ROADMAP */
+  .road{position:relative;margin-top:36px;padding-left:34px}
+  .road:before{content:"";position:absolute;left:9px;top:6px;bottom:6px;width:3px;
+    background:linear-gradient(180deg,var(--red),var(--amber))}
+  .road .r{position:relative;margin-bottom:26px}
+  .road .r:before{content:"";position:absolute;left:-30px;top:4px;width:16px;height:16px;border-radius:50%;
+    background:#fff;border:4px solid var(--red)}
+  .road .r .ph{font-size:.76rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--red)}
+  .road .r h4{font-size:1.1rem;font-weight:800;margin:3px 0 4px}
+  .road .r p{color:var(--mut);font-size:.95rem}
+
+  /* FOOTER */
+  footer{background:var(--hero);color:#c7cedb;padding:56px 0 34px}
+  footer .top{display:flex;justify-content:space-between;gap:30px;flex-wrap:wrap;
+    border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:28px}
+  footer h4{color:#fff;font-size:1.3rem;margin-bottom:8px}
+  footer .disc{font-size:.8rem;color:#7c8798;margin-top:22px;max-width:760px}
+  .pill{display:inline-block;font-size:.78rem;font-weight:700;color:var(--amber);
+    border:1px solid rgba(242,169,0,.4);padding:5px 12px;border-radius:999px;margin-top:8px}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#inicio">
+      <span class="mark">F</span>
+      <span>FORJA Digital PDVSA<small>Plataforma Corporativa de Aplicaciones</small></span>
+    </a>
+    <nav class="navlinks">
+      <a href="#modelo">Modelo</a>
+      <a href="#rapidez">Soluciones rápidas</a>
+      <a href="#datos">Datos transaccionales</a>
+      <a href="#alcance">Alcance</a>
+      <a href="#casos">Casos PDVSA</a>
+      <a href="#ruta">Hoja de ruta</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" id="inicio">
+  <div class="wrap">
+    <span class="eyebrow" style="color:#ffd466;background:rgba(242,169,0,.14)">Propuesta Corporativa · PDVSA</span>
+    <h1>Una <span class="g">fábrica interna de aplicaciones</span> al servicio de todas las áreas de PDVSA</h1>
+    <p class="lead">FORJA Digital convierte las necesidades operativas de cada gerencia en aplicaciones listas para usar: construidas con apoyo de IA, distribuidas por un catálogo corporativo y conectadas de forma segura a los datos del negocio.</p>
+    <div class="cta">
+      <a class="btn primary" href="#modelo">Conocer el modelo →</a>
+      <a class="btn ghost" href="#casos">Casos de uso en PDVSA</a>
+    </div>
+    <div class="hero-stats">
+      <div class="s"><b>2</b><span>niveles de usuario</span></div>
+      <div class="s"><b>Horas</b><span>de la idea a la app</span></div>
+      <div class="s"><b>1</b><span>catálogo corporativo único</span></div>
+      <div class="s"><b>0</b><span>credenciales expuestas al usuario</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="modelo">
+  <div class="wrap">
+    <span class="eyebrow"><span class="num">1</span> Modelo de dos niveles</span>
+    <h2 class="sec-title">Quien construye y quien aprovecha</h2>
+    <p class="sec-lead">FORJA Digital separa dos roles complementarios. Unos pocos crean soluciones para su área; muchos las adoptan y las usan con sus propios datos. El catálogo corporativo es el puente entre ambos.</p>
+
+    <div class="grid" style="margin-top:34px;gap:22px">
+      <div class="level reveal">
+        <div class="tag">Nivel 1</div>
+        <div>
+          <h3>Constructores de área</h3>
+          <p>Analistas funcionales y especialistas de cada gerencia que traducen una necesidad operativa en una aplicación, con apoyo de IA y un taller guiado de principio a fin. No requieren ser desarrolladores: describen el problema y la plataforma genera, previsualiza y publica la solucion con control de versiones.</p>
+          <div class="chips">
+            <span class="chip">Exploración y Producción</span>
+            <span class="chip">Refinación</span>
+            <span class="chip">Comercio y Suministro</span>
+            <span class="chip">Finanzas</span>
+            <span class="chip">RRHH</span>
+            <span class="chip">Mantenimiento</span>
+            <span class="chip">Seguridad Industrial</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="level two reveal">
+        <div class="tag">Nivel 2</div>
+        <div>
+          <h3>Consumidores de catálogo</h3>
+          <p>El personal de cada área que no construye, sino que <b>toma del catálogo</b> la aplicación que resuelve su tarea y la usa con la información de su gerencia. Descubre, adopta, marca favoritas y abre con un clic. Una buena solución creada en un área se multiplica hacia toda la corporación sin volver a desarrollarla.</p>
+          <div class="chips">
+            <span class="chip">Explorar por área</span>
+            <span class="chip">Adoptar del catálogo</span>
+            <span class="chip">Favoritas</span>
+            <span class="chip">Uso reciente al frente</span>
+            <span class="chip">Actualización por versión</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note" style="background:rgba(226,35,26,.07);border-color:rgba(226,35,26,.25)">
+      <span class="b">🛍️</span>
+      <p><b>El catálogo como “app store interno” de PDVSA.</b> El Nivel 1 publica; el Nivel 2 descubre y adopta. La misma herramienta la aprovechan muchas personas de distintas gerencias sin coste de desarrollo adicional.</p>
+    </div>
+  </div>
+</section>
+
+<section id="rapidez" class="alt">
+  <div class="wrap">
+    <span class="eyebrow"><span class="num">2</span> Soluciones rápidas</span>
+    <h2 class="sec-title">De la necesidad a la herramienta en una sesión</h2>
+    <p class="sec-lead">FORJA Digital elimina el cuello de botella de “esperar a Sistemas” para cada requerimiento menor. Cada gerencia prototipa y publica su propia utilidad sin abrir un proyecto formal de TI.</p>
+
+    <div class="grid g3" style="margin-top:34px">
+      <div class="card reveal"><div class="ic">⚡</div>
+        <h3>De la idea a la app</h3>
+        <p>Un taller asistido por IA guía la creación paso a paso: definir, afinar, elegir librerías y servicios, generar, previsualizar y publicar. En horas, no en semanas.</p></div>
+      <div class="card reveal"><div class="ic">♻️</div>
+        <h3>Reutilizar, no reinventar</h3>
+        <p>Librerías y servicios comunes (tasa de cambio, formateadores, conectores a sistemas) se declaran una vez y los usa cualquier app de cualquier área.</p></div>
+      <div class="card reveal"><div class="ic">📈</div>
+        <h3>Multiplicador de valor</h3>
+        <p>Una solución probada en una gerencia se propaga a las demás vía catálogo, sin coste de desarrollo adicional.</p></div>
+      <div class="card reveal amber"><div class="ic">🔄</div>
+        <h3>Mejora continua</h3>
+        <p>El constructor corrige y republica; los consumidores actualizan su copia con un clic. El versionado mantiene todo bajo control.</p></div>
+      <div class="card reveal amber"><div class="ic">🧩</div>
+        <h3>Plantillas aceleradoras</h3>
+        <p>Arranques por tipo de problema: tablero de indicadores, registro de documentos, calculadora operativa, seguimiento de gastos.</p></div>
+      <div class="card reveal amber"><div class="ic">🛡️</div>
+        <h3>Seguro por diseño</h3>
+        <p>Cada app corre aislada y solo accede a la red por los servicios aprobados. El usuario nunca manipula credenciales ni bases de datos.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="datos">
+  <div class="wrap">
+    <span class="eyebrow"><span class="num">3</span> Datos transaccionales</span>
+    <h2 class="sec-title">Resúmenes e indicadores desde los sistemas del negocio</h2>
+    <p class="sec-lead">Las aplicaciones consultan los sistemas transaccionales de PDVSA (ERP, facturación, inventarios, produccion) a través de una capa de servicios de solo lectura. El navegador nunca habla directo con la base: pide resúmenes ya agregados a un conector seguro.</p>
+
+    <div class="flow">
+      <div class="step"><span class="k">Origen</span><h4>BD transaccional</h4><p>ERP, CRM, facturación, inventario, sistemas de producción. Idealmente sobre réplicas de lectura, no contra producción en vivo.</p></div>
+      <div class="step"><span class="k">Conector</span><h4>Gateway de solo lectura</h4><p>Un servicio backend protegido con token corporativo expone endpoints controlados. Aquí vive la seguridad, la caché y el control de carga.</p></div>
+      <div class="step"><span class="k">Contrato</span><h4>Resúmenes agregados</h4><p>No tablas crudas: “producción por campo”, “antigüedad de cuentas por cobrar”, “inventario bajo mínimos”, “horas-hombre por centro”.</p></div>
+      <div class="step"><span class="k">Consumo</span><h4>App del catálogo</h4><p>La aplicación lo usa como un servicio más. El usuario ve tableros e indicadores; jamás toca la base ni las credenciales.</p></div>
+    </div>
+
+    <div class="note">
+      <span class="b">⚖️</span>
+      <p><b>Los indicadores reconcilian contra la fuente.</b> Todo resumen agregado cuadra con el origen y avisa de forma visible cuando faltan datos. Nunca se reporta un falso “0 alertas / sin desviaciones”: la confianza en el dato es parte del diseño.</p>
+    </div>
+  </div>
+</section>
+
+<section id="alcance" class="alt">
+  <div class="wrap">
+    <span class="eyebrow"><span class="num">4</span> Alcance corporativo</span>
+    <h2 class="sec-title">Todo lo que PDVSA puede construir encima</h2>
+    <p class="sec-lead">Extensiones que nacen de lo que la plataforma ya hace y la llevan a escala corporativa, con gobierno, roles y conectores empresariales.</p>
+
+    <div class="grid g3" style="margin-top:34px">
+      <div class="card reveal"><div class="ic">🗂️</div><h3>Organización por áreas</h3>
+        <p>Catálogo segmentado por gerencia, con etiquetas y buscador. Cada usuario ve primero lo relevante a su trabajo.</p>
+        <ul><li>Colecciones curadas: “Kit de Finanzas”, “Kit de Operaciones”</li><li>Búsqueda y filtros por área</li></ul></div>
+
+      <div class="card reveal"><div class="ic">👥</div><h3>Roles y gobierno</h3>
+        <p>Identidad corporativa con tres roles: Constructor, Consumidor y un Aprobador que valida antes de que algo entre al catálogo oficial.</p>
+        <ul><li>Flujo: borrador → revisión → publicado</li><li>Separa el sandbox del área del catálogo oficial</li></ul></div>
+
+      <div class="card reveal"><div class="ic">🔗</div><h3>Datos entre áreas</h3>
+        <p>Una app puede leer lo que producen otras, habilitando tableros transversales y paneles de dirección consolidados.</p>
+        <ul><li>Panel ejecutivo que cruza varias gerencias</li><li>Indicadores corporativos unificados</li></ul></div>
+
+      <div class="card reveal amber"><div class="ic">🔌</div><h3>Conectores empresariales</h3>
+        <p>Además de la transaccional: directorio de personal, calendario, correo/notificaciones, gestión documental. Cada uno como servicio con su token.</p></div>
+
+      <div class="card reveal amber"><div class="ic">📜</div><h3>Gobierno y cumplimiento</h3>
+        <p>Clasificación de sensibilidad de los servicios y registro de qué app consume qué dato. Transparencia total de a dónde llama cada aplicación.</p></div>
+
+      <div class="card reveal amber"><div class="ic">📊</div><h3>Métricas de adopción</h3>
+        <p>El dato de “último uso” por app alimenta un tablero de adopción: qué se usa de verdad, qué retirar y qué áreas construyen más.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="casos">
+  <div class="wrap">
+    <span class="eyebrow"><span class="num">5</span> Casos de uso en PDVSA</span>
+    <h2 class="sec-title">Aplicaciones de apoyo por gerencia</h2>
+    <p class="sec-lead">Ejemplos concretos de soluciones que cada área puede forjar y publicar en el catálogo corporativo.</p>
+
+    <div class="grid g2" style="margin-top:34px">
+      <div class="case reveal"><h4>🛢️ Tablero gerencial E&amp;P</h4><p>Indicadores de exploración y producción con gráficos por pantalla: producción por campo, cumplimiento de metas, variedad de visualizaciones ejecutivas.</p></div>
+      <div class="case reveal"><h4>💰 Gestión y control de gastos</h4><p>Seguimiento de presupuesto por centro de costo, con alertas de desviación que reconcilian contra el sistema financiero.</p></div>
+      <div class="case reveal"><h4>📄 Gestión documental</h4><p>Registro y visor interno de documentos (PDF e imágenes) por tipo: contratos, permisos, certificaciones, con composición estructurada.</p></div>
+      <div class="case reveal"><h4>📦 Inventario y materiales</h4><p>Consulta de existencias y materiales bajo mínimos, alimentada por resúmenes del sistema de inventarios.</p></div>
+      <div class="case reveal"><h4>🧪 Seguridad industrial</h4><p>Registro de incidentes, inspecciones y seguimiento de acciones correctivas por instalación.</p></div>
+      <div class="case reveal"><h4>💱 Indicadores financieros</h4><p>Conversión y tasas, antigüedad de cuentas por cobrar/pagar y tableros de tesorería consolidados.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="ruta" class="alt">
+  <div class="wrap">
+    <span class="eyebrow"><span class="num">6</span> Hoja de ruta</span>
+    <h2 class="sec-title">Un despliegue por fases, protegiendo lo que ya funciona</h2>
+    <div class="road">
+      <div class="r reveal"><div class="ph">Fase 1 · Base</div><h4>Catálogo y dos niveles</h4><p>Habilitar el catálogo corporativo, los roles de Constructor y Consumidor, y las primeras plantillas por tipo de problema.</p></div>
+      <div class="r reveal"><div class="ph">Fase 2 · Gobierno</div><h4>Aprobación y áreas</h4><p>Flujo de publicación con revisión, segmentación del catálogo por gerencia e identidad corporativa.</p></div>
+      <div class="r reveal"><div class="ph">Fase 3 · Datos</div><h4>Gateway de resúmenes</h4><p>Conectores de solo lectura sobre los sistemas transaccionales, con endpoints de agregados y reconciliación contra la fuente.</p></div>
+      <div class="r reveal"><div class="ph">Fase 4 · Escala</div><h4>Métricas y conectores</h4><p>Tablero de adopción, conectores empresariales adicionales y paneles transversales de dirección.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h4>FORJA Digital PDVSA</h4>
+        <p>Plataforma Corporativa de Creación de Aplicaciones</p>
+        <span class="pill">Propuesta interna · Documento de trabajo</span>
+      </div>
+      <div style="max-width:340px">
+        <p style="font-size:.92rem">Construir donde se necesita, aprovechar en toda la corporación. Soluciones rápidas, seguras y conectadas a los datos del negocio.</p>
+      </div>
+    </div>
+    <p class="disc">Documento de propuesta conceptual con fines de presentación interna. “FORJA Digital” es un nombre propuesto para la iniciativa. Las referencias a PDVSA y sus áreas se usan únicamente para contextualizar el alcance corporativo de la plataforma.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target); } });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+})();
+</script>
+
+
+</body>
+</html>
